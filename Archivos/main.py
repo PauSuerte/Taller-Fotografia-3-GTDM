@@ -1,10 +1,10 @@
 import tkinter as tk
-from tkinter import Label, filedialog, Frame
+from tkinter import Label, filedialog, Frame, Toplevel, mainloop, Button
 import panoramic as pm
 import cv2
 from PIL import Image, ImageTk
 
-def getData(): # Funcion para obtener datos y ejecutar la funcion de paneo
+def getDataPan(numBox, nameBox, frame): # Funcion para obtener datos y ejecutar la funcion de paneo
     global imRepre # Declaracion global obligatoria de la representacion de la panoramica en ventana
     imagenes = {} # Diccionario que guarda las imagenes seleccionadas por el usuario
     numFotos = int(numBox.get()) # Obtener el numero de fotos seleccionado por el usuario de la caja de input
@@ -19,26 +19,51 @@ def getData(): # Funcion para obtener datos y ejecutar la funcion de paneo
     flag = pm.progPaneo(nameSalida,numFotos,imagenes,dirname) # Ejecutamos la funcion de paneo, junto a los datos necesarios anteriormente obtenidos
     if flag:
         imRepre = ImageTk.PhotoImage(Image.open(dirname+'/'+nameSalida)) # Mostrar imagen en ventana
-        labelIm = Label(frame, image=imRepre) ; labelIm.pack()
+        labelIm = Label(frame, image=imRepre) ; labelIm.pack() # Label necesario para que se muestre la imagen 
 
-pan_window = tk.Tk() ; pan_window.geometry("800x600")   # Creacion de ventana principal ; Tamaño inicial de la ventana
 
-title = tk.Label(pan_window, text = "Creacion de panoramicas") ; title.pack() # Creacion de etiqueta ; colocado de etiqueta
+def close_window(wd): # Funcion para esconder la ventana actual y posteriormente mostrar de nuevo la master
 
-title_numFotos = tk.Label(pan_window, text = "Introduzca el numero de fotos") ; title_numFotos.pack() 
+    if wd == 'pan':
+        pan_window.withdraw()
 
-numBox = tk.Entry(pan_window) ; numBox.pack() # Caja de introduccion de numero de fotos para panear
+    master.deiconify()
 
-title_nameSalida = tk.Label(pan_window, text = "Introduzca el nombre del resultado (con extension)") ; title_nameSalida.pack() 
+def openNewWindow(ventana):
+    global pan_window 
+    global fs_window
+    global edit_window
 
-nameBox = tk.Entry(pan_window) ; nameBox.pack() # Caja de introduccion de numero de fotos para panear
+    if ventana == 'pan':
+        ### PANORAMIC ###
+        master.withdraw() # Se esconde la ventana principal
 
-panBtn = tk.Button(pan_window , text = "Realizar panoramica" , command= getData) ; panBtn.pack() # Realizar panoramica
+        pan_window = Toplevel(master) ; pan_window.geometry("800x600") # Creacion de ventana principal ; Tamaño inicial de la ventana
 
-frame = Frame(pan_window, width=300, height=200) ; frame.pack()
-# frame.place(anchor='center', relx=0.5, rely=0.5)
+        pan_window.protocol("WM_DELETE_WINDOW", lambda: close_window('pan')) # Al cerrar la ventana, se recuperara la ventana principal
 
-# imRepre = ImageTk.PhotoImage(Image.open("pan.jpg"))
-# labelIm = Label(frame, image=imRepre) ; labelIm.pack() 
+        title = tk.Label(pan_window, text = "Creacion de panoramicas") ; title.pack() # Creacion de etiqueta ; colocado de etiqueta
 
-pan_window.mainloop() # Registro obligatorio para funcionamiento de la ventana
+        title_numFotos = tk.Label(pan_window, text = "Introduzca el numero de fotos") ; title_numFotos.pack() 
+
+        numBox = tk.Entry(pan_window) ; numBox.pack() # Caja de introduccion de numero de fotos para panear
+
+        title_nameSalida = tk.Label(pan_window, text = "Introduzca el nombre del resultado (con extension)") ; title_nameSalida.pack() 
+
+        nameBox = tk.Entry(pan_window) ; nameBox.pack() # Caja de introduccion de numero de fotos para panear
+
+        panBtn = tk.Button(pan_window , text = "Realizar panoramica" , command= lambda: getDataPan(numBox,nameBox,frame)) ; panBtn.pack() # Realizar panoramica
+
+        frame = Frame(pan_window, width=300, height=200) ; frame.pack()
+
+
+### MAIN ###
+
+master = tk.Tk() ; master.geometry("800x600") # Creacion de la ventana master
+btnPan = Button(master,
+             text ="Click to open a new window",
+             command = lambda: openNewWindow('pan')) # Boton para abrir ventana de paneo
+btnPan.pack(pady = 10)
+
+
+mainloop() # Registro obligatorio para funcionamiento de las ventanas
