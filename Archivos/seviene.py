@@ -4,10 +4,10 @@ import panoramic as pm
 import cv2
 from PIL import Image, ImageTk
 
-def getDataPan(nameBox,extension,frame): # Funcion para obtener datos y ejecutar la funcion de paneo
+def getDataPan(nameBox, frame): # Funcion para obtener datos y ejecutar la funcion de paneo
     global imRepre # Declaracion global obligatoria de la representacion de la panoramica en ventana
     imagenes = {} # Diccionario que guarda las imagenes seleccionadas por el usuario
-    nameSalida = nameBox.get() + extension.get() # Obtener el nombre de la salida seleccionado por el usuario de la caja de input y añadir la extension
+    nameSalida = nameBox.get() # Obtener el nombre de la salida seleccionado por el usuario de la caja de input
     dirname = filedialog.askdirectory() #Seleccion de carpeta donde se dejaran los resultados a traves del buscador
 
     panFiles = filedialog.askopenfilenames(title = "Elige las fotos a panear", filetypes=(("png files", "*.png"),("jpg files","*.jpg")))
@@ -50,19 +50,15 @@ def openNewWindow(ventana):
 
         title = tk.Label(pan_window, text = "Creacion de panoramicas") ; title.pack() # Creacion de etiqueta ; colocado de etiqueta
 
+        title_numFotos = tk.Label(pan_window, text = "Introduzca el numero de fotos") ; title_numFotos.pack() 
+
+        numBox = tk.Entry(pan_window) ; numBox.pack() # Caja de introduccion de numero de fotos para panear
+
         title_nameSalida = tk.Label(pan_window, text = "Introduzca el nombre del resultado (con extension)") ; title_nameSalida.pack() 
 
-        nameBox = tk.Entry(pan_window) ; nameBox.pack() # Caja de introduccion de nombre del resultado
+        nameBox = tk.Entry(pan_window) ; nameBox.pack() # Caja de introduccion de numero de fotos para panear
 
-        title_extensions = tk.Label(pan_window, text = "Seleccione la extension deseada") ; title_extensions.pack()
-
-        extension = tk.StringVar() # Variable que guardara el resultado de los radio buttons (extensiones)
-
-        rPng = tk.Radiobutton(pan_window, text='.png', variable=extension, value='.png') ; rPng.pack()
-
-        rJpg = tk.Radiobutton(pan_window, text='jpg', variable=extension, value='.jpg') ; rJpg.pack()
-
-        panBtn = tk.Button(pan_window , text = "Realizar panoramica" , command= lambda: getDataPan(nameBox,extension,frame)) ; panBtn.pack() # Realizar panoramica
+        panBtn = tk.Button(pan_window , text = "Realizar panoramica" , command= lambda: getDataPan(nameBox,frame)) ; panBtn.pack() # Realizar panoramica
 
         frame = Frame(pan_window, width=300, height=200) ; frame.pack()
     
