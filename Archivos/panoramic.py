@@ -73,15 +73,19 @@ def pan(im1, im2):
         return result
 
 def crop(paneoFinal):
-    gray = cv2.cvtColor(paneoFinal,cv2.COLOR_BGR2GRAY)
-    _,thresh = cv2.threshold(gray, 1, 255, cv2.THRESH_BINARY)
+    gray = cv2.cvtColor(paneoFinal,cv2.COLOR_BGR2GRAY) # Convertir imagen a gris
+    _,thresh = cv2.threshold(gray, 1, 255, cv2.THRESH_BINARY) # Mascara quitando negro
+    cutPoint = 0 # Se define el punto por donde se recortara la imagen
 
-    countours, hierarchy = cv2.findContours(thresh,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    cnt = countours[0]
-    x,y,w,h = cv2.boundingRect(cnt)
-
-    crop = paneoFinal[y:y+h,x:x+w]
-    return crop
+    for c in range(0,thresh.shape[0]//2): # Bucle for que recorre la mitad de la imagen en busca del mayor numero de elementos no imagen siendo el punto con mas 0s el punto de recorte utilizado posteriormente
+        if np.count_nonzero(thresh[c,:] == 0) < 50: # Si se alcanza un punto donde hay menos de 50 0s, se para el bucle, ya que nos indica que toda la fila es imagen
+            cutPoint = c -1
+            break
+    
+    h, _, _ = np.shape(paneoFinal) # Se recorta la imagen
+    result = paneoFinal[cutPoint:h-cutPoint,:]
+    
+    return result
 
 def progPaneo(nomSalida,cantidad,imagenes,pathRes):
     paneos = {}
@@ -91,17 +95,17 @@ def progPaneo(nomSalida,cantidad,imagenes,pathRes):
 
     if cantidad>2:
         result = pan(paneos["0"],paneos["1"])
-        cv2.imwrite(os.path.join(pathRes , nomSalida), result)
+        # cv2.imwrite(os.path.join(pathRes , nomSalida), result)
 
         # Prueba crop
-        # resultCROP = crop(result)
-        # cv2.imwrite('CROPEADO'+nomSalida, resultCROP)
+        resultCROP = crop(result)
+        cv2.imwrite(os.path.join(pathRes , nomSalida), resultCROP)
         return True
     
     else:
-        cv2.imwrite(os.path.join(pathRes , nomSalida), paneos["0"])
+        # cv2.imwrite(os.path.join(pathRes , nomSalida), paneos["0"])
         
         # Prueba crop
-        # resultCROP = crop(paneos["0"])
-        # cv2.imwrite('CROPEADO'+nomSalida, resultCROP)
+        resultCROP = crop(paneos["0"])
+        cv2.imwrite(os.path.join(pathRes , nomSalida), resultCROP)
         return True
