@@ -15,6 +15,7 @@ El código desarrollado consiste en un programa capaz de realizar técnicas foto
 
 Al iniciar el código, se abrirá la ventana principal, donde se encuentran dos botones que abren las diferentes ventanas del programa, una para realizar fotografías panorámicas, y otra para realizar focus stacking.
 
+
 # Panorámicas
 
 Las fotografías panorámicas se realizan a través del programa [panoramic.py](https://github.com/PauSuerte/Taller-Fotografia-3-GTDM/blob/main/Archivos/panoramic.py). Para ello, necesitará dos o más fotografías, la carpeta donde se quiera guardar el archivo final, y el nombre con la extensión de dicho archivo. 
@@ -31,6 +32,18 @@ Por último, la función `crop` se encarga de encontrar automáticamente los esp
 # Focus Stacking
 
 En este apartado, en el archivo [fs.py](https://github.com/PauSuerte/Taller-Fotografia-3-GTDM/blob/main/Archivos/fs.py) se ha desarrollado un programa de apilamiento de enfoque, esto es, una técnica de procesamiento digital en la cual se agrupar múltiples imágenes de un mismo objeto que han sido tomadas enfocando en distintos puntos o tienen diversas profundidades de campo con el fin de crear una imagen final con más profundidad de campo que las imágenes iniciales.
+
+Respecto al funcionamiento del programa se encontrará en primer lugar una función llamada `load_images(images)` en la cual el argumento de entrada será las imágenes que se quieran tratar con el programa. Esta función lo que hará será marcar el orden de las capas de color en el que se encuentran ya que cv2 trabaja en BGR (blue-green-red) y las imágenes en su mayoria se trabajan en RGB (red-green-blue).
+
+A continuación, se halla la _primera_ función (de dos) de alineamiento de imágenes (`align(im1, im2)`). Como parámetros de entrada se introducen las imágenes que se quieren alinear. Primero se pasarán a blanco y negro para que el módulo de cv2 trabaje de manera más eficiente. y tras ello la función se encargará de, según el tamaño de la primera imagen introducida mantener dicho tamaño y alinear la siguiente sobre la misma.
+
+A esta función le sigue pues la _segunda_ función de alineamiento `align_images(images)` y que empleará la anterior para alinear toda la lista que se le ha de introducir. Así pues extraerá una lista nueva con las imagenes alineadas.
+
+Seguidamente, se encuentra la función `doLap(image)`. Esta calculará el gradient map de la imagen mediante un filtro de blur gaussiano y una laplaciana.
+
+Finalmente, se sitúan dos funciones complementarias `focus_stack(unimages)` y `main(nameSalida,imagenes,dirname)`. `focus_stack(unimages)` empleará las funciones anteriores para alinear las imagenes y con ellas comenzará almacenarlas todas en la misma imagen final. En esta función se asegura que las imagenes introducidas se encuentran en blanco y negro y tras ello genera el output vacío en el que almacenará el mismo y tras ello lo generará.
+En `main(nameSalida,imagenes,dirname)`, por otro lado, llamará a todas las funciones necesarias para que el código de la interfaz pueda ejecutar sin errores las funciones y conseguir generar la imagen deseada.
+
 
 # Main
 
