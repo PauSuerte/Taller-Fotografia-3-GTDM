@@ -20,6 +20,7 @@ def align(im1, im2):
     sz = im1.shape
 
     warp_mode = cv2.MOTION_TRANSLATION
+    # LAS SIGUIENTES IMPLEMENTACIONES TARDAN MUCHO TIEMPO Y NO MEJORAN EN EXCESO LA IMAGEN FINAL
     # warp_mode = cv2.MOTION_HOMOGRAPHY
     # warp_mode = cv2.MOTION_AFFINE
 
@@ -67,7 +68,7 @@ def doLap(image):
 def focus_stack(unimages):
     images = align_images(unimages)
 
-    print('   Done. FOCUS-STACKING')
+    print('   REALIZANDO EL FOCUS-STACKING')
     laps = []
     for i in range(len(images)):
         laps.append(doLap(cv2.cvtColor(images[i],cv2.COLOR_BGR2GRAY)))
